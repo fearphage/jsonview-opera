@@ -2,7 +2,7 @@
 
 Formats & syntax highlights JSON viewed inside of the web browser! Yay
 
-An Opera port of Jamie Wilkinson's Chrome port of Ben Hollis' JSONView extension for Firefox: [http://jsonview.com](http://jsonview.com)
+An Opera port of Jamie Wilkinson's [Chrome port](http://github.com/jamiew/jsonview-chrome) of Ben Hollis' [JSONView extension](http://jsonview.com) for Firefox.
 
 Opera doesn't have extensions so this is merely a UserJS script. ([install instructions](http://userjs.org/help/installation))
 
