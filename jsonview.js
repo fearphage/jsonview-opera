@@ -5,26 +5,31 @@
     entities = {'<': '&lt;', '&': '&amp;', '"': '&quot;', '>': '&gt;'}
     ,reUrl = /^(?:https?):\/\/[^\s]+$/
     ,reEncode = /[<&">]/g
+    ,reJSONP = /^\s*([a-z0-9\.]+)\(([\s\S]+)\);?\s*$/i
     ,body = document.body
-    ,element = body && body.childNodes.length == 1 && document.compatMode == 'BackCompat' && body.childNodes[0]
+    ,element = body && document.compatMode == 'BackCompat' && body.childNodes.length == 1 && body.childNodes[0]
     ,collapser = document.createElement('div')
-    ,ellipsis = document.createElement('span');
+    ,ellipsis = document.createElement('span')
+    ,uri = location.href
+    ,match
   ;
-
-  if (!element || element.nodeName != 'PRE' || !/\{|\[/.test(body.innerText.charAt(0))) return;
   
-  if (document.readyState == 'interactive' || document.readyState == 'complete') {
-    main();
-  }
-  else {
-    document.addEventListener('DOMContentLoaded', main);
-  }
+  if (!element || element.nodeName != 'PRE' || !(/\{|\[/.test(body.innerText.charAt(0)) || (match = body.innerText.match(reJSONP)))) return;
   
   collapser.className = 'collapser';
   collapser.innerText = '-';
 
   ellipsis.className = 'ellipsis';
   ellipsis.innerHTML = ' &hellip; ';
+  
+  if (document.readyState == 'interactive' || document.readyState == 'complete') {
+    main();
+  }
+  else {
+    document.addEventListener('DOMContentLoaded', main, false);
+  }
+  
+ 
   
   
   function htmlEncode(t) {
@@ -102,11 +107,25 @@
     ;
     collapser.innerHTML = collapser.innerHTML == '-' ? '+' : '-';
   }
-
-  function displayObject(JSONObject) {
-    if (!JSONObject) return;
-    body.innerHTML = '<style type="text/css">.prop{font-weight:bold;}.null{color:red;}.bool{color:blue;}.num{color:blue;}.string{color:green;}.collapser{position:absolute;left:-1em;cursor:pointer;}li{position:relative;}li:after{content:\',\';}li:last-child:after{content:\'\';}#error{border-radius:8px;border:1px solid #970000;background-color:#F7E8E8;margin:.5em;padding:.5em;}.errormessage{font-family:monospace;}#json{font-family:monospace;font-size:.8em;}ul{list-style:none;margin:0 0 0 2em;padding:0;}h1{font-size:1.2em;}#toolbar{position:fixed;top:0;right:0;}#expandAll,#collapseAll{display:inline-block;}</style>'
-        + '<div id="json">' + jsonToHTML(JSONObject) + '</div>';
+  function replaceHTML(content, title) {
+    document.selectSingleNode('//head').innerHTML = '<title>' + (title || uri) + '</title><style type="text/css">h1{white-space:pre;}.prop{font-weight:bold;}.null{color:red;}.bool{color:blue;}.num{color:blue;}.string{color:green;}.collapser{position:absolute;left:-1em;cursor:pointer;}li{position:relative;}li:after{content:\',\';}li:last-child:after{content:\'\';}#error{border-radius:8px;border:1px solid #970000;background-color:#F7E8E8;margin:.5em;padding:.5em;}body{font-family:monospace;font-size:.8em;}ul{list-style:none;margin:0 0 0 2em;padding:0;}h1{font-size:1.2em;}#toolbar{position:fixed;top:0;right:0;}#expandAll,#collapseAll{display:inline-block;}.callback+#json{padding-left:1em;}.callback{color:#A52A2A;}</style>'
+    body.innerHTML = content;
+  }
+  function displayObject(text) {
+    if (!text) return;
+    try {
+      var obj = JSON.parse(text);
+    }
+    catch(e) {
+      return displayError(e, text);
+    }
+    
+    if (match) {
+      replaceHTML('<div class="callback">' +  match[1] + '(</div><div id="json">' + jsonToHTML(obj) + '</div><div class="callback">);</div>');
+    }
+    else {
+      replaceHTML('<div id="json">' + jsonToHTML(obj) + '</div>');
+    }
 
     Array.prototype.forEach.call(document.selectNodes('//*[contains(concat(" ", @class, " "), " collapsible ")]/parent::li'), function(li) {
       li
@@ -115,19 +134,26 @@
     });
   }
 
+  function displayError(error, data) {
+    var output = '<div id="error">Error parsing JSON: '+error.message+'</div>';
+    output += '<h1>'+error.stacktrace+':</h1>';      
+    output += '<div id="json">' + htmlEncode(data) + '</div>';
+    replaceHTML(output, uri + ' - Error');
+  }
+  
   function main(options) {
     options || (options = {});
     if (options.safeMethod) {
       var xhr = new XMLHttpRequest();
        xhr.onreadystatechange = function() {
           if (this.readyState == 4)
-            displayObject(JSON.parse(this.responseText));
+            displayObject(this.responseText);
         };
         xhr.open('GET', location.href);
         xhr.send(null);
     }
     else {
-      displayObject(JSON.parse(document.body.childNodes[0].innerText));
+      displayObject(match && match[2] || element.innerText);
     }
   }
 })(this.document);
