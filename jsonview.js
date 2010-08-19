@@ -4,7 +4,7 @@
   var
     entities = {'<': '&lt;', '&': '&amp;', '"': '&quot;', '>': '&gt;'}
     ,reUrl = /^(?:https?):\/\/[^\s]+$/
-    ,reEncode = /<&">/g
+    ,reEncode = /[<&">]/g
     ,body = document.body
     ,element = body && body.childNodes.length == 1 && document.compatMode == 'BackCompat' && body.childNodes[0]
     ,collapser = document.createElement('div')
@@ -28,7 +28,7 @@
   
   
   function htmlEncode(t) {
-    return !t ? t : t.toString().replace(reEncode, function(c) { return entities[c]; });
+    return t.toString().replace(reEncode, function(c) { return entities[c]; });
   }
   
   function span(value, className) {
