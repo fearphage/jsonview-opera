@@ -108,7 +108,7 @@
     collapser.innerHTML = collapser.innerHTML == '-' ? '+' : '-';
   }
   function replaceHTML(content, title) {
-    document.selectSingleNode('//head').innerHTML = '<title>' + (title || uri) + '</title><style type="text/css">h1{white-space:pre;}.prop{font-weight:bold;}.null{color:red;}.bool{color:blue;}.num{color:blue;}.string{color:green;}.collapser{position:absolute;left:-1em;cursor:pointer;}li{position:relative;}li:after{content:\',\';}li:last-child:after{content:\'\';}#error{border-radius:8px;border:1px solid #970000;background-color:#F7E8E8;margin:.5em;padding:.5em;}body{font-family:monospace;font-size:.8em;}ul{list-style:none;margin:0 0 0 2em;padding:0;}h1{font-size:1.2em;}#toolbar{position:fixed;top:0;right:0;}#expandAll,#collapseAll{display:inline-block;}.callback+#json{padding-left:1em;}.callback{color:#A52A2A;}</style>'
+    document.querySelector('head').innerHTML = '<title>' + (title || uri) + '</title><style type="text/css">h1{white-space:pre;}.prop{font-weight:bold;}.null{color:red;}.bool{color:blue;}.num{color:blue;}.string{color:green;}.collapser{position:absolute;left:-1em;cursor:pointer;}li{position:relative;}li:after{content:\',\';}li:last-child:after{content:\'\';}#error{border-radius:8px;border:1px solid #970000;background-color:#F7E8E8;margin:.5em;padding:.5em;}body{font-family:monospace;font-size:.8em;}ul{list-style:none;margin:0 0 0 2em;padding:0;}h1{font-size:1.2em;}#toolbar{position:fixed;top:0;right:0;}#expandAll,#collapseAll{display:inline-block;}.callback+#json{padding-left:1em;}.callback{color:#A52A2A;}</style>'
     body.innerHTML = content;
   }
   function displayObject(text) {
@@ -135,10 +135,7 @@
   }
 
   function displayError(error, data) {
-    var output = '<div id="error">Error parsing JSON: '+error.message+'</div>';
-    output += '<h1>'+error.stacktrace+':</h1>';      
-    output += '<div id="json">' + htmlEncode(data) + '</div>';
-    replaceHTML(output, uri + ' - Error');
+    replaceHTML('<div id="error">Error parsing JSON: '+error.message+'</div><h1>'+error.stacktrace+':</h1><div id="json">' + htmlEncode(data) + '</div>', uri + ' - Error');
   }
   
   function main(options) {
