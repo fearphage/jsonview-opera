@@ -1,3 +1,10 @@
+// ==UserScript==
+// @name          JSON View
+// @description   Pretty-prints JSON and JSONP
+// @ujs:modified  2010-10-22
+// @ujs:download  http://gist.github.com/raw/227881/53ad5dff46b825ea3facd77532b57da2ab445425/diff_for_gist.user.js
+// ==/UserScript==
+
 (function(document) {
   if (top != this) return;
   
