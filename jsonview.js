@@ -21,7 +21,7 @@
     ,match
   ;
   
-  if (!element || element.nodeName != 'PRE' || !(/\{|\[/.test(body.innerText.charAt(0)) || (match = body.innerText.match(reJSONP)))) return;
+  if (!element || element.nodeName != 'PRE' || !(/\s+[{[]/.test(body.innerText) || (match = body.innerText.match(reJSONP)))) return;
   
   collapser.className = 'collapser';
   collapser.innerText = '-';
