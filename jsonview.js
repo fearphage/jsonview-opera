@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          JSON View
 // @description   Pretty-prints JSON and JSONP
-// @ujs:modified  2011-01-04
+// @ujs:modified  2011-10-27
 // @ujs:download  https://github.com/fearphage/jsonview-opera/raw/master/jsonview.js
 // ==/UserScript==
 
