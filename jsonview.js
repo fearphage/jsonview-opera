@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          JSON View
 // @description   Pretty-prints JSON and JSONP
-// @ujs:modified  2011-10-27
+// @ujs:modified  2011-10-2*
 // @ujs:download  https://github.com/fearphage/jsonview-opera/raw/master/jsonview.js
 // ==/UserScript==
 
@@ -21,7 +21,7 @@
     ,match
   ;
   
-  if (!element || element.nodeName != 'PRE' || !(/\s+[{[]/.test(body.innerText) || (match = body.innerText.match(reJSONP)))) return;
+  if (!element || element.nodeName != 'PRE' || !(/^\s*[{[]/.test(body.innerText) || (match = body.innerText.match(reJSONP)))) return;
   
   collapser.className = 'collapser';
   collapser.innerText = '-';
